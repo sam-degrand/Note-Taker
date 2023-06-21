@@ -46,3 +46,23 @@ app.post("/api/notes", function(req, res) {
     console.log("Note saved to db.json. Content: ", newNote);
     res.json(savedNotes);
 });
+
+// Route to delete a note by ID
+app.delete("/api/notes/:id", function(req, res) {
+    let savedNotes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
+    const noteID = req.params.id;
+    console.log(`Deleting note with ID ${noteID}`);
+    savedNotes = savedNotes.filter(currNote => currNote.id !== noteID);
+    
+    savedNotes.forEach((currNote, index) => {
+        currNote.id = index.toString();
+    });
+
+    fs.writeFileSync("./db/db.json", JSON.stringify(savedNotes));
+    res.json(savedNotes);
+});
+
+// Start the server and listen on the specified port
+app.listen(port, function() {
+    console.log(`Now listening on port ${port}.`);
+});
